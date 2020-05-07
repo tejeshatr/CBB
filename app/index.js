@@ -6,8 +6,8 @@
 var http = require('http');
 var url = require('url');
 var stringDecoder = require('string_decoder').StringDecoder;
-var helpers = require('lib/helpers');
-var handlers = require('lib/handlers');
+var helpers = require('./lib/helpers');
+var handlers = require('./lib/handlers');
 
 var httpServer = http.createServer(function(req, res){
 	mainServer(req, res);
@@ -22,7 +22,7 @@ mainServer = function(req, res){
 	var queryStringObject = parsedUrl.query;
 	var method = req.method;
 	var headers = req.headers;
-		var decoder = new StringDecoder('utf-8');
+		var decoder = new stringDecoder('utf-8');
 	var buff = '';
 	req.on('data', function(data){
 		buff += decoder.write(data);
@@ -41,16 +41,16 @@ mainServer = function(req, res){
 		};
 
 		handler(data, function(statusCode, returnData){
-			statusCode = helpers.checknum(statusCode, 200);
+			statusCode = helpers.checkNum(statusCode, 200);
 
 			res.setHeader('content-type', 'html');
 			res.writeHead(statusCode);
-			res.end(dataString);
+			res.end(returnData);
 
 			console.log("Sent status code:", statusCode);
 		});
 
-	};
+	});
 };
 
 httpServer.listen(3000, function(){
@@ -58,6 +58,7 @@ httpServer.listen(3000, function(){
 });
 
 var router = {
+	'' : handlers.home,
 	'notFound' : handlers.notFound,
 	'ping' : handlers.ping
 };
